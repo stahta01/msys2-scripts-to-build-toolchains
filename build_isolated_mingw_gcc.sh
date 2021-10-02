@@ -201,7 +201,7 @@ LDFLAGS+=" -Wl,--disable-dynamicbase" \
   $COMMON_CONFIGURATION_OPTIONS \
   --prefix=$TEMP_INSTALL_PREFIX \
   --libexecdir=${TEMP_INSTALL_PREFIX}/lib \
-  --with-native-system-header-dir=${BUILD_BASE_PREFIX}/${TARGET_TRIPLET}/include \
+  --with-native-system-header-dir=${TEMP_INSTALL_PREFIX}/${TARGET_TRIPLET}/include \
   --build=x86_64-w64-mingw32 \
   --host=x86_64-w64-mingw32 \
   --target=$TARGET_TRIPLET \
@@ -291,6 +291,8 @@ LDFLAGS="-pipe" \
   --prefix=$FINAL_INSTALL_PREFIX \
   --libexecdir=${FINAL_INSTALL_PREFIX}/lib \
   --with-native-system-header-dir=${FINAL_INSTALL_PREFIX}/${TARGET_TRIPLET}/include \
+  --build=x86_64-w64-mingw32 \
+  --host=x86_64-w64-mingw32 \
   --target=$TARGET_TRIPLET \
   --with-{gmp,mpfr,mpc,zlib}=$BUILD_BASE_PREFIX \
   --without-isl \
