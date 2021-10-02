@@ -275,17 +275,20 @@ sed -i 's|SELFTEST_TARGETS = @selftest_languages@|SELFTEST_TARGETS =|'  gcc/Make
 #make $PARALLEL_MAKE 2>&1 | tee --append ../build-boot-manifest.log && \
 #make install 2>&1 | tee --append ../build-boot-manifest.log || exit 1
 
-echo "Step B7a: Configure Full boot GCC" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
-rm -fr ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
+#echo "Step B7a: Configure Full boot GCC" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
+#rm -fr ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} &&
+echo "Step B7a: Configuring Full boot GCC" >> ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
 mkdir -p ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
-CC="${BUILD_BASE_PREFIX}/bin/gcc.exe" \
-CXX="${BUILD_BASE_PREFIX}/bin/g++.exe" \
+CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt -D_UCRT" \
+CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt -D_UCRT" \
 GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
 GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
-PATH="${TEMP_INSTALL_PREFIX}/bin:${TEMP_INSTALL_PREFIX}/lib/gcc/x86_64-w64-mingw32/10.3.0:${BUILD_BASE_PREFIX}/bin:$PATH" \
+PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
 CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
 CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
 LDFLAGS="-pipe" \
+_LDFLAGS_FOR_TARGET="$LDFLAGS" \
+LDFLAGS+=" -Wl,--disable-dynamicbase" \
 ../$GCC_VERSION/configure \
   $COMMON_CONFIGURATION_OPTIONS \
   --prefix=$TEMP_INSTALL_PREFIX \
@@ -294,12 +297,11 @@ LDFLAGS="-pipe" \
   --build=x86_64-w64-mingw32 \
   --host=x86_64-w64-mingw32 \
   --target=$TARGET_TRIPLET \
-  --without-zlib \
   --without-isl \
   --without-libiconv \
+  --without-zlib \
   --enable-languages=c,c++,ada \
-  --enable-shared --enable-static \
-  --enable-libada \
+  --enable-static \
   --disable-bootstrap \
   --disable-checking \
   --disable-win32-registry \
@@ -307,6 +309,8 @@ LDFLAGS="-pipe" \
   --with-arch=x86-64 --with-tune=generic \
   --with-gnu-as --with-gnu-ld \
   --disable-libstdcxx-pch \
+  --with-boot-ldflags="${LDFLAGS} -static-libstdc++ -static-libgcc" \
+  LDFLAGS_FOR_TARGET="${_LDFLAGS_FOR_TARGET}" \
   --disable-libstdcxx-debug 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
 echo "Step B7b: Build and Install FULL boot GCC" >> ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
 cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
