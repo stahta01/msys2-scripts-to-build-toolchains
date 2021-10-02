@@ -1,0 +1,8 @@
+GCC configure option bootstrap is auto disabled when cross compiling.
+Therfore, cross GCC compile directions assume disable-bootstrap is used.
+So, set that option when trying to borrow steps from those directions.
+
+Building an non cross GCC under msys2 mingw with configure option 
+"--disable-bootstrap" requires an edit of gcc/Makefile.in.
+
+The "CPPFLAGS" seems to be ignored when building GCC
