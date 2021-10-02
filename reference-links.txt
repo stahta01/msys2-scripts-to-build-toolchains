@@ -1,0 +1,15 @@
+https://gcc.gnu.org/install/configure.html
+https://gcc.gnu.org/install/prerequisites.html
+https://gcc.gnu.org/wiki/FAQ#configure_suffix
+https://gist.github.com/mohanpedala/1e2ff5661761d3abd0385e8223e16425  # Bash script error help
+https://github.com/gcc-mirror/gcc/blob/releases/gcc-10/contrib/prerequisites.sha512
+https://github.com/stahta01/stahta01.github.io/wiki/Errors-and-fixes-for-Building-MinGW64-GCC
+https://wiki.osdev.org/Ada_Bare_Bones
+https://wiki.osdev.org/Ada_Runtime_Library
+https://wiki.osdev.org/Cross-Compiler_Successful_Builds
+https://wiki.osdev.org/GCC_Cross-Compiler
+https://wiki.osdev.org/GNAT_Cross-Compiler
+https://wiki.osdev.org/Hosted_GCC_Cross-Compiler
+https://wiki.osdev.org/Target_Triplet
+https://www.mingw-w64.org/
+https://www.msys2.org/docs/environments/
