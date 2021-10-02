@@ -155,48 +155,137 @@ sed -i 's|SELFTEST_TARGETS = @selftest_languages@|SELFTEST_TARGETS =|'  gcc/Make
 #
 ###
 
-echo "Step B1a: Delete $TEMP_INSTALL_PREFIX folder" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log
-rm -fr "$TEMP_INSTALL_PREFIX"
-mkdir -p "$TEMP_INSTALL_PREFIX"
+#echo "Step B1a: Delete $TEMP_INSTALL_PREFIX folder" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log
+#rm -fr "$TEMP_INSTALL_PREFIX"
+#mkdir -p "$TEMP_INSTALL_PREFIX"
+#
+#echo "Step B1b: Install MinGW64 Headers" > ${STARTING_FOLDER}/build-boot-headers-${TARGET_TRIPLET}.log && \
+#cd ${STARTING_FOLDER} && \
+#mkdir -p build-boot-headers-${TARGET_TRIPLET} && cd build-boot-headers-${TARGET_TRIPLET} && \
+#CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt" \
+#CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt" \
+#GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
+#GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
+#PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
+#CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -I$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/include" \
+#CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#LDFLAGS="-pipe" \
+#../${MINGW64_CRT_FOLDER}/mingw-w64-headers/configure \
+#  --build=x86_64-w64-mingw32 \
+#  --host=x86_64-w64-mingw32 \
+#  --target=${TARGET_TRIPLET} \
+#  --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
+#  --enable-sdk=all \
+#  --with-default-win32-winnt=0x601 \
+#  --with-default-msvcrt=ucrt \
+#  --enable-idl \
+#  --without-widl  2>&1 | tee --append ../build-boot-headers-${TARGET_TRIPLET}.log && \
+#cd ${STARTING_FOLDER}/build-boot-headers-${TARGET_TRIPLET} && \
+#make install 2>&1 | tee --append ../build-boot-headers-${TARGET_TRIPLET}.log || exit 1
+#
+#echo "Step B2a: Configure Boot GCC" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
+#rm -fr ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
+#mkdir -p ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
+#CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt -D_UCRT" \
+#CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt -D_UCRT" \
+#GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
+#GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
+#PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
+#CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#LDFLAGS="-pipe" \
+#_LDFLAGS_FOR_TARGET="$LDFLAGS" \
+#LDFLAGS+=" -Wl,--disable-dynamicbase" \
+#../$GCC_VERSION/configure \
+#  $COMMON_CONFIGURATION_OPTIONS \
+#  --prefix=$TEMP_INSTALL_PREFIX \
+#  --libexecdir=${TEMP_INSTALL_PREFIX}/lib \
+#  --with-native-system-header-dir=${TEMP_INSTALL_PREFIX}/${TARGET_TRIPLET}/include \
+#  --build=x86_64-w64-mingw32 \
+#  --host=x86_64-w64-mingw32 \
+#  --target=$TARGET_TRIPLET \
+#  --without-isl \
+#  --without-libiconv \
+#  --without-zlib \
+#  --enable-languages=c,c++,ada \
+#  --enable-static \
+#  --disable-bootstrap \
+#  --disable-checking \
+#  --disable-win32-registry \
+#  --disable-symvers \
+#  --with-arch=x86-64 --with-tune=generic \
+#  --with-gnu-as --with-gnu-ld \
+#  --disable-libstdcxx-pch \
+#  --with-boot-ldflags="${LDFLAGS} -static-libstdc++ -static-libgcc" \
+#  LDFLAGS_FOR_TARGET="${_LDFLAGS_FOR_TARGET}" \
+#  --disable-libstdcxx-debug 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
+#echo "Step B2b: Build and Install boot GCC" >> ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
+#cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
+#make $PARALLEL_MAKE V=1 all-gcc 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log && \
+#make install-gcc 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
+#
+#if [ $DO_BOOT_MINGW64_CRT_CONFIG -eq 1 ]; then
+#  echo "Step B3a: Configure MinGW64 CRT" > ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET}.log && \
+#  cd ${STARTING_FOLDER} && \
+#  mkdir -p build-boot-crt-${TARGET_TRIPLET} && cd build-boot-crt-${TARGET_TRIPLET} && \
+#  CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt" \
+#  CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt" \
+#  GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
+#  GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
+#  PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
+#  CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#  CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#  LDFLAGS="-pipe" \
+#  ../${MINGW64_CRT_FOLDER}/mingw-w64-crt/configure \
+#    --build=x86_64-w64-mingw32 \
+#    --host=x86_64-w64-mingw32 \
+#    --target=${TARGET_TRIPLET} \
+#    --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
+#    --with-default-msvcrt=ucrt \
+#    --with-sysroot=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
+#    --enable-wildcard \
+#    --disable-dependency-tracking \
+#    --disable-lib32 --enable-lib64 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log || exit 1
+#fi
+#echo "Step B3b: Build and Install MinGW64 CRT" >> ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET}.log && \
+#cd ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET} && \
+#make 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log && \
+#make install-strip 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log || exit 1
+#
+#echo "Step B5a. Configure windows-default-manifest" >> ${STARTING_FOLDER}/build-boot-manifest.log && \
+#  cd ${STARTING_FOLDER} && \
+#  [[ -d ${STARTING_FOLDER}/build-boot-manifest ]] && rm -rf ${STARTING_FOLDER}/build-boot-manifest
+#  cp -rf ${STARTING_FOLDER}/$MANIFEST_FOLDER ${STARTING_FOLDER}/build-boot-manifest
+#  cd ${STARTING_FOLDER}/build-boot-manifest
+#  CC="${FINAL_INSTALL_PREFIX}/bin/gcc.exe" \
+#  CXX="${FINAL_INSTALL_PREFIX}/bin/g++.exe" \
+#  PATH="${FINAL_INSTALL_PREFIX}/bin:${BUILD_BASE_PREFIX}/bin:$PATH" \
+#  CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -I$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/include" \
+#  CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fexceptions" \
+#  CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fexceptions" \
+#  LDFLAGS="-pipe -L$FINAL_INSTALL_PREFIX/${TARGET_TRIPLET}/lib -L$FINAL_INSTALL_PREFIX/lib -L$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/lib -L$BUILD_BASE_PREFIX/lib" \
+#  ./configure \
+#    --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
+#    --build=x86_64-w64-mingw32 \
+#    --host=x86_64-w64-mingw32 \
+#    --target=${TARGET_TRIPLET} 2>&1 | tee --append ../build-boot-manifest.log || exit 1
+#echo "Step B5b. Build and install windows-default-manifest" >> ${STARTING_FOLDER}/build-boot-manifest.log && \
+#cd ${STARTING_FOLDER}/build-boot-manifest && \
+#make $PARALLEL_MAKE 2>&1 | tee --append ../build-boot-manifest.log && \
+#make install 2>&1 | tee --append ../build-boot-manifest.log || exit 1
 
-echo "Step B1b: Install MinGW64 Headers" > ${STARTING_FOLDER}/build-boot-headers-${TARGET_TRIPLET}.log && \
-cd ${STARTING_FOLDER} && \
-mkdir -p build-boot-headers-${TARGET_TRIPLET} && cd build-boot-headers-${TARGET_TRIPLET} && \
-CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt" \
-CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt" \
-GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
-GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
-PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
-CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -I$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/include" \
-CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-LDFLAGS="-pipe" \
-../${MINGW64_CRT_FOLDER}/mingw-w64-headers/configure \
-  --build=x86_64-w64-mingw32 \
-  --host=x86_64-w64-mingw32 \
-  --target=${TARGET_TRIPLET} \
-  --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
-  --enable-sdk=all \
-  --with-default-win32-winnt=0x601 \
-  --with-default-msvcrt=ucrt \
-  --enable-idl \
-  --without-widl  2>&1 | tee --append ../build-boot-headers-${TARGET_TRIPLET}.log && \
-cd ${STARTING_FOLDER}/build-boot-headers-${TARGET_TRIPLET} && \
-make install 2>&1 | tee --append ../build-boot-headers-${TARGET_TRIPLET}.log || exit 1
-
-echo "Step B2a: Configure Boot GCC" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
+echo "Step B7a: Configure Full boot GCC" > ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
 rm -fr ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
 mkdir -p ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
-CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt -D_UCRT" \
-CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt -D_UCRT" \
+CC="${BUILD_BASE_PREFIX}/bin/gcc.exe" \
+CXX="${BUILD_BASE_PREFIX}/bin/g++.exe" \
 GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
 GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
-PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
+PATH="${TEMP_INSTALL_PREFIX}/bin:${TEMP_INSTALL_PREFIX}/lib/gcc/x86_64-w64-mingw32/10.3.0:${BUILD_BASE_PREFIX}/bin:$PATH" \
 CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
 CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
 LDFLAGS="-pipe" \
-_LDFLAGS_FOR_TARGET="$LDFLAGS" \
-LDFLAGS+=" -Wl,--disable-dynamicbase" \
 ../$GCC_VERSION/configure \
   $COMMON_CONFIGURATION_OPTIONS \
   --prefix=$TEMP_INSTALL_PREFIX \
@@ -205,96 +294,7 @@ LDFLAGS+=" -Wl,--disable-dynamicbase" \
   --build=x86_64-w64-mingw32 \
   --host=x86_64-w64-mingw32 \
   --target=$TARGET_TRIPLET \
-  --without-isl \
-  --without-libiconv \
   --without-zlib \
-  --enable-languages=c,c++,ada \
-  --enable-static \
-  --disable-bootstrap \
-  --disable-checking \
-  --disable-win32-registry \
-  --disable-symvers \
-  --with-arch=x86-64 --with-tune=generic \
-  --with-gnu-as --with-gnu-ld \
-  --disable-libstdcxx-pch \
-  --with-boot-ldflags="${LDFLAGS} -static-libstdc++ -static-libgcc" \
-  LDFLAGS_FOR_TARGET="${_LDFLAGS_FOR_TARGET}" \
-  --disable-libstdcxx-debug 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
-echo "Step B2b: Build and Install boot GCC" >> ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
-cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
-make $PARALLEL_MAKE V=1 all-gcc 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log && \
-make install-gcc 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
-
-if [ $DO_BOOT_MINGW64_CRT_CONFIG -eq 1 ]; then
-  echo "Step B3a: Configure MinGW64 CRT" > ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET}.log && \
-  cd ${STARTING_FOLDER} && \
-  mkdir -p build-boot-crt-${TARGET_TRIPLET} && cd build-boot-crt-${TARGET_TRIPLET} && \
-  CC="${BUILD_BASE_PREFIX}/bin/gcc.exe -mcrtdll=ucrt" \
-  CXX="${BUILD_BASE_PREFIX}/bin/g++.exe -mcrtdll=ucrt" \
-  GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
-  GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
-  PATH="${BUILD_BASE_PREFIX}/bin:$PATH" \
-  CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-  CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-  LDFLAGS="-pipe" \
-  ../${MINGW64_CRT_FOLDER}/mingw-w64-crt/configure \
-    --build=x86_64-w64-mingw32 \
-    --host=x86_64-w64-mingw32 \
-    --target=${TARGET_TRIPLET} \
-    --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
-    --with-default-msvcrt=ucrt \
-    --with-sysroot=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
-    --enable-wildcard \
-    --disable-dependency-tracking \
-    --disable-lib32 --enable-lib64 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log || exit 1
-fi
-echo "Step B3b: Build and Install MinGW64 CRT" >> ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET}.log && \
-cd ${STARTING_FOLDER}/build-boot-crt-${TARGET_TRIPLET} && \
-make 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log && \
-make install-strip 2>&1 | tee --append ../build-boot-crt-${TARGET_TRIPLET}.log || exit 1
-
-echo "Step B5a. Configure windows-default-manifest" >> ${STARTING_FOLDER}/build-boot-manifest.log && \
-  cd ${STARTING_FOLDER} && \
-  [[ -d ${STARTING_FOLDER}/build-boot-manifest ]] && rm -rf ${STARTING_FOLDER}/build-boot-manifest
-  cp -rf ${STARTING_FOLDER}/$MANIFEST_FOLDER ${STARTING_FOLDER}/build-boot-manifest
-  cd ${STARTING_FOLDER}/build-boot-manifest
-  CC="${FINAL_INSTALL_PREFIX}/bin/gcc.exe" \
-  CXX="${FINAL_INSTALL_PREFIX}/bin/g++.exe" \
-  PATH="${FINAL_INSTALL_PREFIX}/bin:${BUILD_BASE_PREFIX}/bin:$PATH" \
-  CPPFLAGS="-D__USE_MINGW_ANSI_STDIO=1 -I$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/include" \
-  CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fexceptions" \
-  CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fexceptions" \
-  LDFLAGS="-pipe -L$FINAL_INSTALL_PREFIX/${TARGET_TRIPLET}/lib -L$FINAL_INSTALL_PREFIX/lib -L$BUILD_BASE_PREFIX/${TARGET_TRIPLET}/lib -L$BUILD_BASE_PREFIX/lib" \
-  ./configure \
-    --prefix=$TEMP_INSTALL_PREFIX/${TARGET_TRIPLET} \
-    --build=x86_64-w64-mingw32 \
-    --host=x86_64-w64-mingw32 \
-    --target=${TARGET_TRIPLET} 2>&1 | tee --append ../build-boot-manifest.log || exit 1
-echo "Step B5b. Build and install windows-default-manifest" >> ${STARTING_FOLDER}/build-boot-manifest.log && \
-cd ${STARTING_FOLDER}/build-boot-manifest && \
-make $PARALLEL_MAKE 2>&1 | tee --append ../build-boot-manifest.log && \
-make install 2>&1 | tee --append ../build-boot-manifest.log || exit 1
-
-echo "Step B7a: Configure Full GCC" > ${STARTING_FOLDER}/build-${REAL_GCC_VERSION}.log && \
-rm -fr ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
-mkdir -p ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && cd ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
-CC="${FINAL_INSTALL_PREFIX}/bin/gcc.exe" \
-CXX="${FINAL_INSTALL_PREFIX}/bin/g++.exe" \
-GNATBIND="${FINAL_INSTALL_PREFIX}/bin/gnatbind.exe" \
-GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
-PATH="${FINAL_INSTALL_PREFIX}/bin:${FINAL_INSTALL_PREFIX}/lib/gcc/x86_64-w64-mingw32/10.3.0:${BUILD_BASE_PREFIX}/bin:$PATH" \
-CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
-LDFLAGS="-pipe" \
-../$GCC_VERSION/configure \
-  $COMMON_CONFIGURATION_OPTIONS \
-  --prefix=$FINAL_INSTALL_PREFIX \
-  --libexecdir=${FINAL_INSTALL_PREFIX}/lib \
-  --with-native-system-header-dir=${FINAL_INSTALL_PREFIX}/${TARGET_TRIPLET}/include \
-  --build=x86_64-w64-mingw32 \
-  --host=x86_64-w64-mingw32 \
-  --target=$TARGET_TRIPLET \
-  --with-{gmp,mpfr,mpc,zlib}=$BUILD_BASE_PREFIX \
   --without-isl \
   --without-libiconv \
   --enable-languages=c,c++,ada \
@@ -307,8 +307,46 @@ LDFLAGS="-pipe" \
   --with-arch=x86-64 --with-tune=generic \
   --with-gnu-as --with-gnu-ld \
   --disable-libstdcxx-pch \
-  --disable-libstdcxx-debug 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log || exit 1
-echo "Step B7b: Build and Install boot GCC" >> ${STARTING_FOLDER}/build-${REAL_GCC_VERSION}.log && \
-cd ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
-make $PARALLEL_MAKE all-gcc 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log && \
-make install-gcc 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log || exit 1
+  --disable-libstdcxx-debug 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
+echo "Step B7b: Build and Install FULL boot GCC" >> ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION}.log && \
+cd ${STARTING_FOLDER}/build-boot-${REAL_GCC_VERSION} && \
+make $PARALLEL_MAKE all 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log && \
+make install 2>&1 | tee --append ../build-boot-${REAL_GCC_VERSION}.log || exit 1
+
+#echo "Step C7a: Configure Full GCC" > ${STARTING_FOLDER}/build-${REAL_GCC_VERSION}.log && \
+#rm -fr ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
+#mkdir -p ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && cd ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
+#CC="${BUILD_BASE_PREFIX}/bin/gcc.exe" \
+#CXX="${BUILD_BASE_PREFIX}/bin/g++.exe" \
+#GNATBIND="${BUILD_BASE_PREFIX}/bin/gnatbind.exe" \
+#GNATMAKE="${BUILD_BASE_PREFIX}/bin/gnatmake.exe" \
+#PATH="${FINAL_INSTALL_PREFIX}/bin:${FINAL_INSTALL_PREFIX}/lib/gcc/x86_64-w64-mingw32/10.3.0:${BUILD_BASE_PREFIX}/bin:$PATH" \
+#CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe" \
+#LDFLAGS="-pipe" \
+#../$GCC_VERSION/configure \
+#  $COMMON_CONFIGURATION_OPTIONS \
+#  --prefix=$FINAL_INSTALL_PREFIX \
+#  --libexecdir=${FINAL_INSTALL_PREFIX}/lib \
+#  --with-native-system-header-dir=${FINAL_INSTALL_PREFIX}/${TARGET_TRIPLET}/include \
+#  --build=x86_64-w64-mingw32 \
+#  --host=x86_64-w64-mingw32 \
+#  --target=$TARGET_TRIPLET \
+#  --with-{gmp,mpfr,mpc,zlib}=$BUILD_BASE_PREFIX \
+#  --without-isl \
+#  --without-libiconv \
+#  --enable-languages=c,c++,ada \
+#  --enable-shared --enable-static \
+#  --enable-libada \
+#  --disable-bootstrap \
+#  --disable-checking \
+#  --disable-win32-registry \
+#  --disable-symvers \
+#  --with-arch=x86-64 --with-tune=generic \
+#  --with-gnu-as --with-gnu-ld \
+#  --disable-libstdcxx-pch \
+#  --disable-libstdcxx-debug 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log || exit 1
+#echo "Step C7b: Build and Install boot GCC" >> ${STARTING_FOLDER}/build-${REAL_GCC_VERSION}.log && \
+#cd ${STARTING_FOLDER}/build-${REAL_GCC_VERSION} && \
+#make $PARALLEL_MAKE all-gcc 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log && \
+#make install-gcc 2>&1 | tee --append ../build-${REAL_GCC_VERSION}.log || exit 1
